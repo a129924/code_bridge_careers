@@ -1,0 +1,17 @@
+[project]
+name = ""
+version = ""
+description = ""
+authors = [
+    {name = "a129924", email = "a129924@gmail.com"},
+]
+dependencies = [
+    "pandas>=2.1.4",
+    "aiohttp>=3.9.1",
+    "pydantic>=2.5.3",
+    "typing-extensions>=4.9.0",
+]
+requires-python = ">=3.9"
+readme = "README.md"
+license = {text = "MIT"}
+
