@@ -1,14 +1,20 @@
 from typing import Iterable
-from aiohttp import ClientSession
+from aiohttp import ClientSession, ClientTimeout
+from asyncio import Semaphore
 
 from ..._typing import Optional, TracebackType, Literal, URL
 from ._function import parse_http_response
 
 
 class AsyncBaseWebCrawler:
-    def __init__(self, timeout: int = 60, worker: int = 10, **headers):
-        self.__timeout = timeout
-        self.__worker = worker
+    def __init__(
+        self,
+        timeout: int = 60,
+        coroutine_limit: int = 10,
+        **headers,
+    ):
+        ClientTimeout(timeout)
+        self.__semaphore = Semaphore(coroutine_limit)
 
         self.__session = ClientSession()
 
@@ -39,7 +45,8 @@ class AsyncBaseWebCrawler:
         await self.__session.close()
 
     async def __aenter__(self) -> ClientSession:
-        return self.start()
+        async with self.__semaphore:
+            return self.start()
 
     async def __aexit__(
         self,
